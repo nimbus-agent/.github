@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 💬 Questions & ideas (Discussions)
+    url: https://github.com/nimbus-agent/Nimbus/discussions
+    about: Ask questions, share ideas, or show what you built. Please use Discussions instead of issues for open-ended topics.
+  - name: 🔒 Report a security vulnerability
+    url: https://github.com/nimbus-agent/nimbus-security
+    about: Do not file public issues for security reports. Use private vulnerability reporting or the disclosure process here.
+  - name: 📚 Documentation
+    url: https://nimbus-agent.dev
+    about: Read the docs before filing — your question may already be answered.
