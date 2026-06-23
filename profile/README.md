@@ -20,7 +20,7 @@ A growing roster of ~80 first-party connectors across Google, Microsoft 365, Git
 
 ## How you talk to it
 
-Clients (CLI, and a Tauri 2.0 desktop app) speak to the headless Gateway only over JSON-RPC 2.0 IPC. Install via Homebrew, Scoop, native installers (`.msi` / `.pkg` / `.rpm`), or the VS Code extension.
+Clients — the CLI, a [VS Code extension](https://github.com/nimbus-agent/nimbus-vscode), and a Tauri 2.0 desktop app — talk to the headless Gateway over local JSON-RPC 2.0 IPC. A [browser web clipper](https://github.com/nimbus-agent/nimbus-web-clipper) (Chrome + Firefox) saves what you read straight into your index over the gateway's paired, local HTTP surface. Install the gateway + CLI via Homebrew, Scoop, or native installers (`.msi` / `.pkg` / `.rpm`).
 
 ```bash
 # Homebrew (macOS / Linux)
@@ -38,9 +38,14 @@ Local inference is supported through Ollama, so `nimbus ask` can run entirely of
 | Repo | What it is |
 | --- | --- |
 | [**Nimbus**](https://github.com/nimbus-agent/Nimbus) | The monorepo — Gateway, CLI, desktop UI, SDK, and first-party MCP connectors |
+| [**nimbus-vscode**](https://github.com/nimbus-agent/nimbus-vscode) | VS Code / Open VSX extension — ask + search your index from the editor |
+| [**nimbus-web-clipper**](https://github.com/nimbus-agent/nimbus-web-clipper) | Chrome + Firefox (MV3) browser extension — clip articles & selections into your index |
 | [**homebrew-tap**](https://github.com/nimbus-agent/homebrew-tap) | Homebrew distribution channel |
 | [**scoop-bucket**](https://github.com/nimbus-agent/scoop-bucket) | Scoop distribution channel |
-| [**linux-repo**](https://github.com/nimbus-agent/linux-repo) | Linux package distribution channel |
+| [**linux-repo**](https://github.com/nimbus-agent/linux-repo) | Linux (apt / yum) package distribution channel |
+| [**awesome-nimbus**](https://github.com/nimbus-agent/awesome-nimbus) | Curated connectors, recipes, extensions & community resources |
+| [**nimbus-security**](https://github.com/nimbus-agent/nimbus-security) | Security model, invariant catalogue & vulnerability disclosure |
+| [**nimbus-benchmarks**](https://github.com/nimbus-agent/nimbus-benchmarks) | Public performance benchmarks & trend dashboards |
 
 ## Architecture at a glance
 
