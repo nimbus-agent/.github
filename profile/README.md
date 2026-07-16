@@ -37,7 +37,9 @@ Local inference is supported through Ollama, so `nimbus ask` can run entirely of
 
 | Repo | What it is |
 | --- | --- |
-| [**Nimbus**](https://github.com/nimbus-agent/Nimbus) | The monorepo — Gateway, CLI, desktop UI, SDK, and first-party MCP connectors |
+| [**Nimbus**](https://github.com/nimbus-agent/Nimbus) | The monorepo — Gateway, CLI, desktop UI, and first-party MCP connectors |
+| [**nimbus-sdk**](https://github.com/nimbus-agent/nimbus-sdk) | `@nimbus-dev/sdk` — MIT, dependency-free authoring contract for MCP connectors & extensions (published to npm) |
+| [**nimbus-client**](https://github.com/nimbus-agent/nimbus-client) | `@nimbus-dev/client` — MIT typed JSON-RPC 2.0 IPC client for the gateway, used by the CLI & extensions (published to npm) |
 | [**nimbus-vscode**](https://github.com/nimbus-agent/nimbus-vscode) | VS Code / Open VSX extension — ask + search your index from the editor |
 | [**nimbus-web-clipper**](https://github.com/nimbus-agent/nimbus-web-clipper) | Chrome + Firefox (MV3) browser extension — clip articles & selections into your index |
 | [**homebrew-tap**](https://github.com/nimbus-agent/homebrew-tap) | Homebrew distribution channel |
