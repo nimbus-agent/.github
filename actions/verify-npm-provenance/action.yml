@@ -1,0 +1,50 @@
+name: Verify npm provenance
+description: >-
+  Assert a published npm version carries both the npm publish attestation and a
+  SLSA provenance predicate, and that the provenance names the expected source
+  repo/workflow/commit. Checks claims, not cryptography — pair with
+  `npm audit signatures` for signature verification.
+
+inputs:
+  package:
+    description: "npm package name, e.g. @nimbus-dev/sdk"
+    required: true
+  version:
+    description: "Published version to verify"
+    required: true
+  expected-repo:
+    description: "owner/repo that must appear in the provenance source claim"
+    required: true
+  expected-workflow:
+    description: "Workflow path that must have produced it, e.g. .github/workflows/release.yml"
+    required: false
+  expected-sha:
+    description: "Commit SHA the build must have come from"
+    required: false
+  severity:
+    description: "'gate' (default) fails the job on any non-ok status; 'monitor' always exits 0"
+    required: false
+    default: gate
+
+outputs:
+  status:
+    description: "ok | missing-provenance | source-mismatch | indeterminate"
+    value: ${{ steps.verify.outputs.status }}
+  detail:
+    description: "Short human-readable reason"
+    value: ${{ steps.verify.outputs.detail }}
+
+runs:
+  using: composite
+  steps:
+    - id: verify
+      shell: bash
+      # Node 20+ is preinstalled on GitHub runners; no setup-node, no install.
+      run: node "${{ github.action_path }}/src/main.js"
+      env:
+        INPUT_PACKAGE: ${{ inputs.package }}
+        INPUT_VERSION: ${{ inputs.version }}
+        INPUT_EXPECTED_REPO: ${{ inputs.expected-repo }}
+        INPUT_EXPECTED_WORKFLOW: ${{ inputs.expected-workflow }}
+        INPUT_EXPECTED_SHA: ${{ inputs.expected-sha }}
+        INPUT_SEVERITY: ${{ inputs.severity }}

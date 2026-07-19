@@ -1,0 +1,79 @@
+name: Probe publish token
+description: >-
+  Liveness probe for a marketplace publish token using the vendor CLI's own
+  verify-pat command. The token is passed only via environment — never argv —
+  and neither the token nor any response body is logged.
+
+inputs:
+  tool:
+    description: "'vsce' (VS Code Marketplace) or 'ovsx' (Open VSX)"
+    required: true
+  namespace:
+    description: "Publisher / namespace to verify against, e.g. nimbus-agent"
+    required: true
+
+outputs:
+  status:
+    description: "ok | dead | not-configured | indeterminate"
+    value: ${{ steps.probe.outputs.status }}
+
+runs:
+  using: composite
+  steps:
+    - id: probe
+      shell: bash
+      # PUBLISH_TOKEN is mapped by the caller from the appropriate secret.
+      # It is exported into the vendor CLI's expected env var and never echoed.
+      # Output is discarded wholesale: error messages from these CLIs can echo
+      # request context, and this runs in a public repository's logs.
+      #
+      # CLI versions are pinned EXACTLY, not by range: this hands a live publish
+      # credential to the resolved package, so `@latest` (or a `^` range, which
+      # still floats) would put a third-party release in the credential's trust
+      # boundary. Bumping these is a deliberate, reviewed change.
+      run: |
+        set +e
+        if [ -z "${PUBLISH_TOKEN}" ]; then
+          # An unset secret cannot be assessed as live or revoked: this branch
+          # never contacts the vendor CLI and never runs the reachability
+          # check below, so it has no evidence the token was rejected.
+          # `dead` is reserved for a confirmed rejection by a reachable
+          # service — reporting it here would be a false revocation alarm.
+          # Whether an unconfigured token is a hard failure is the caller's
+          # call; this probe's job is only to report the signal honestly.
+          echo "status=not-configured" >> "$GITHUB_OUTPUT"
+          echo "probe ${TOOL}: secret not configured (no token to check)"
+          exit 0
+        fi
+        if [ "${TOOL}" = "vsce" ]; then
+          VSCE_PAT="${PUBLISH_TOKEN}" npx --yes @vscode/vsce@3.9.2 verify-pat "${NAMESPACE}" >/dev/null 2>&1
+          code=$?
+          reach_url="https://marketplace.visualstudio.com/"
+        else
+          OVSX_PAT="${PUBLISH_TOKEN}" npx --yes ovsx@1.0.2 verify-pat "${NAMESPACE}" >/dev/null 2>&1
+          code=$?
+          reach_url="https://open-vsx.org/api/-/search?size=1"
+        fi
+
+        if [ $code -eq 0 ]; then
+          echo "status=ok" >> "$GITHUB_OUTPUT"
+          echo "probe ${TOOL} (${NAMESPACE}): ok"
+          exit 0
+        fi
+
+        # A non-zero exit alone does NOT mean the token is revoked — registry
+        # downtime, a timeout or rate-limiting look identical. Only call it dead
+        # if the service is actually reachable; otherwise report indeterminate
+        # so the caller warns instead of raising a false revocation alarm.
+        http="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 "$reach_url" 2>/dev/null)"
+        if [ "$http" = "200" ]; then
+          echo "status=dead" >> "$GITHUB_OUTPUT"
+          echo "probe ${TOOL} (${NAMESPACE}): failed (exit=${code}) and service reachable -> dead"
+        else
+          echo "status=indeterminate" >> "$GITHUB_OUTPUT"
+          echo "probe ${TOOL} (${NAMESPACE}): failed (exit=${code}) and service unreachable (http=${http}) -> indeterminate"
+        fi
+        exit 0
+      env:
+        TOOL: ${{ inputs.tool }}
+        NAMESPACE: ${{ inputs.namespace }}
