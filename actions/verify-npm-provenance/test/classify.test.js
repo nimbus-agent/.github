@@ -92,7 +92,14 @@ test("truncated base64 payload decodes to null", () => {
   assert.equal(decodeStatements(broken), null);
 });
 
-test("detail never contains the raw statement blob", () => {
+test("detail is a short summary, never the raw statement blob", () => {
   const r = classifyProvenance(statementsOf(real), EXPECTED);
-  assert.ok(r.detail.length < 200, "detail should be a short summary");
+  // Assert the actual content, not merely that it is short: a length bound
+  // would pass on a truncated blob just as happily as on a real summary.
+  assert.equal(
+    r.detail,
+    ".github/workflows/release.yml @ https://github.com/nimbus-agent/nimbus-sdk",
+  );
+  assert.ok(!/[A-Za-z0-9+/]{80,}={0,2}/.test(r.detail), "no base64 payload in detail");
+  assert.ok(!r.detail.includes("dsseEnvelope"), "no envelope internals in detail");
 });
