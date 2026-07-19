@@ -14,7 +14,7 @@ inputs:
 
 outputs:
   status:
-    description: "ok | dead | indeterminate"
+    description: "ok | dead | not-configured | indeterminate"
     value: ${{ steps.probe.outputs.status }}
 
 runs:
@@ -34,8 +34,15 @@ runs:
       run: |
         set +e
         if [ -z "${PUBLISH_TOKEN}" ]; then
-          echo "status=dead" >> "$GITHUB_OUTPUT"
-          echo "probe ${TOOL}: token not configured"
+          # An unset secret cannot be assessed as live or revoked: this branch
+          # never contacts the vendor CLI and never runs the reachability
+          # check below, so it has no evidence the token was rejected.
+          # `dead` is reserved for a confirmed rejection by a reachable
+          # service — reporting it here would be a false revocation alarm.
+          # Whether an unconfigured token is a hard failure is the caller's
+          # call; this probe's job is only to report the signal honestly.
+          echo "status=not-configured" >> "$GITHUB_OUTPUT"
+          echo "probe ${TOOL}: secret not configured (no token to check)"
           exit 0
         fi
         if [ "${TOOL}" = "vsce" ]; then
