@@ -58,5 +58,11 @@ if (process.env["NODE_ENV"] !== "test" && process.argv[1]?.endsWith("main.js")) 
   if (out) appendFileSync(out, `status=${status}\ndetail=${detail}\n`);
   console.log(`npm provenance: ${pkg}@${version} -> ${status} (${detail})`);
   if (status !== "ok" && severity === "gate") console.log(runbook(pkg, version, status, detail));
-  process.exit(exitCodeFor(status, severity));
+  // Set exitCode instead of calling process.exit(): exit() tears the process
+  // down immediately, which can race undici's keep-alive sockets/timers
+  // (observed as a libuv UV_HANDLE_CLOSING assertion crash on Windows/Node 24)
+  // and can truncate buffered stdout / the GITHUB_OUTPUT write. Assigning
+  // process.exitCode lets Node exit naturally once the event loop drains,
+  // preserving the same exit-code contract without the early teardown.
+  process.exitCode = exitCodeFor(status, severity);
 }
