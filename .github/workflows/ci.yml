@@ -23,4 +23,6 @@ jobs:
         with:
           persist-credentials: false
       - name: Run action tests
-        run: node --test actions/**/test/
+        # A bare directory arg worked on Node 20 but fails on Node 24
+        # (MODULE_NOT_FOUND); runners now default to 24. Use an explicit glob.
+        run: node --test "actions/**/test/*.test.js"
