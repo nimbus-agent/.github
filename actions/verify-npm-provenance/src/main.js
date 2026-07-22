@@ -1,6 +1,30 @@
+import { randomUUID } from "node:crypto";
 import { appendFileSync } from "node:fs";
 import { classifyProvenance, decodeStatements } from "./classify.js";
 import { fetchAttestations } from "./fetch-attestations.js";
+
+/**
+ * Render workflow outputs using the heredoc-delimiter form.
+ *
+ * `detail` is not a fixed vocabulary — it is built from registry-supplied data
+ * (the DSSE `repository` field, for one). With the plain `key=value` form a
+ * newline in that value emits a second `status=` line, and GitHub resolves
+ * duplicate keys last-wins, so a `source-mismatch` could be read downstream as
+ * `ok`. A random per-call delimiter means a value can never close its own block
+ * and so can never start a line the runner would parse as a key assignment.
+ */
+export function renderOutputs(entries, newDelimiter = defaultDelimiter) {
+  let block = "";
+  for (const [key, value] of entries) {
+    const delim = newDelimiter();
+    block += `${key}<<${delim}\n${String(value)}\n${delim}\n`;
+  }
+  return block;
+}
+
+function defaultDelimiter() {
+  return `ghadelim_${randomUUID().replaceAll("-", "")}`;
+}
 
 /** Map a fetch outcome plus the classifier into a single status. */
 export function decide(fetched, expected) {
@@ -55,7 +79,15 @@ if (process.env["NODE_ENV"] !== "test" && process.argv[1]?.endsWith("main.js")) 
   const { status, detail } = decide(fetched, expected);
 
   const out = process.env["GITHUB_OUTPUT"];
-  if (out) appendFileSync(out, `status=${status}\ndetail=${detail}\n`);
+  if (out) {
+    appendFileSync(
+      out,
+      renderOutputs([
+        ["status", status],
+        ["detail", detail],
+      ]),
+    );
+  }
   console.log(`npm provenance: ${pkg}@${version} -> ${status} (${detail})`);
   if (status !== "ok" && severity === "gate") console.log(runbook(pkg, version, status, detail));
   // Set exitCode instead of calling process.exit(): exit() tears the process
