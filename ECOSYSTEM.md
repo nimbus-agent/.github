@@ -61,10 +61,16 @@ Where the capability reaches a human.
 | --- | --- |
 | [`nimbus-vscode`](https://github.com/nimbus-agent/nimbus-vscode) | VS Code / Open VSX extension — ask, search, chat participant, SCM tooling |
 | [`nimbus-web-clipper`](https://github.com/nimbus-agent/nimbus-web-clipper) | Chrome + Firefox MV3 extension, over the gateway's paired HTTP surface |
-| `nimbus-raycast` | Raycast quick-ask |
-| `nimbus-statuspage` | On-call and status pages from indexed incidents, alerts and DORA metrics |
+| [`nimbus-raycast`](https://github.com/nimbus-agent/nimbus-raycast) | Raycast quick-ask (scaffold) |
+| [`nimbus-statuspage`](https://github.com/nimbus-agent/nimbus-statuspage) | On-call and status pages from indexed incidents, alerts and DORA metrics (scaffold) |
+| [`nimbus-postmortem`](https://github.com/nimbus-agent/nimbus-postmortem) | Incident postmortem drafts from indexed incidents, deploys and implicated changes (scaffold) |
 
 The CLI and TUI ship inside the `Nimbus` repo rather than separately.
+
+Surfaces marked *(scaffold)* hold a vision README and a build prompt but no
+implementation yet. They are sequenced in the gateway's
+[roadmap](https://github.com/nimbus-agent/Nimbus/blob/main/docs/roadmap.md), not
+here — this document says what exists, not what happens next.
 
 ### Connectors and extensions
 
