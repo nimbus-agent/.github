@@ -8,6 +8,11 @@ That single constraint shapes the whole ecosystem: there is one gateway that
 owns your data, one contract that everything speaks, and a set of surfaces that
 reach you where you already work.
 
+Where this is heading is recorded in the gateway's roadmap,
+[§ Direction](https://github.com/nimbus-agent/Nimbus/blob/main/docs/roadmap.md#direction):
+Nimbus as the trust layer between AI agents and engineering systems. That is a
+planned direction; this document describes what exists.
+
 ## The shape
 
 ```text
@@ -17,8 +22,8 @@ reach you where you already work.
    ────────            │   ┌──────────────────────┐   │      ──────────
    VS Code    ─────┐   │   │  Nimbus Gateway      │   │  ┌── Google, Microsoft
    web clipper ────┼──►│   │  · private SQLite    │──►│──┼── GitHub, GitLab, Jira
-   Raycast    ─────┤   │   │  · agent engine      │   │  ├── Slack, Notion, …
-   CLI / TUI  ─────┘   │   │  · HITL consent gate │   │  └── ~80 services, MCP only
+   MCP clients ────┤   │   │  · agent engine      │   │  ├── Slack, Notion, …
+   CLI / TUI  ─────┘   │   │  · HITL consent gate │   │  └── about 95 services, MCP only
                        │   └──────────────────────┘   │
                        │        JSON-RPC 2.0 IPC      │
                        └──────────────────────────────┘
@@ -50,7 +55,7 @@ arrow pointing in the only direction that works.
 | Repo | Role | License |
 | --- | --- | --- |
 | [`Nimbus`](https://github.com/nimbus-agent/Nimbus) | The gateway daemon, connectors, index, agents and the JSON-RPC surface | AGPL-3.0 |
-| [`nimbus-sdk`](https://github.com/nimbus-agent/nimbus-sdk) | **The contract.** Dependency-free TypeScript types for authoring connectors and extensions | MIT |
+| [`nimbus-sdk`](https://github.com/nimbus-agent/nimbus-sdk) | **The contract.** A language-neutral authoring contract for connectors and extensions, with TypeScript, Python and Go bindings | MIT |
 | [`nimbus-client`](https://github.com/nimbus-agent/nimbus-client) | Typed JSON-RPC IPC client — the only supported path from a client to the gateway | MIT |
 
 ### Surfaces
@@ -61,14 +66,11 @@ Where the capability reaches a human.
 | --- | --- |
 | [`nimbus-vscode`](https://github.com/nimbus-agent/nimbus-vscode) | VS Code / Open VSX extension — ask, search, chat participant, SCM tooling |
 | [`nimbus-web-clipper`](https://github.com/nimbus-agent/nimbus-web-clipper) | Chrome + Firefox MV3 extension, over the gateway's paired HTTP surface |
-| [`nimbus-raycast`](https://github.com/nimbus-agent/nimbus-raycast) | Raycast quick-ask (scaffold) |
-| [`nimbus-statuspage`](https://github.com/nimbus-agent/nimbus-statuspage) | On-call and status pages from indexed incidents, alerts and DORA metrics (scaffold) |
-| [`nimbus-postmortem`](https://github.com/nimbus-agent/nimbus-postmortem) | Incident postmortem drafts from indexed incidents, deploys and implicated changes (scaffold) |
+| [`nimbus-mcp`](https://github.com/nimbus-agent/nimbus-mcp) | Launcher for the Nimbus MCP server: gives any MCP client your local index and the built-in agents |
 
 The CLI and TUI ship inside the `Nimbus` repo rather than separately.
 
-Surfaces marked *(scaffold)* hold a vision README and a build prompt but no
-implementation yet. They are sequenced in the gateway's
+Which surface comes next is decided in the gateway's
 [roadmap](https://github.com/nimbus-agent/Nimbus/blob/main/docs/roadmap.md), not
 here — this document says what exists, not what happens next.
 
@@ -77,9 +79,7 @@ here — this document says what exists, not what happens next.
 | Repo | Role |
 | --- | --- |
 | `create-nimbus-connector` | Scaffolding generator for first-party-style MCP connectors |
-| `nimbus-mcp-servers` | Standalone MCP servers derived from Nimbus connectors, usable by any MCP client |
-| `nimbus-connector-registry` | Signed index and publisher-key directory for the connector marketplace |
-| `nimbus-recipes` | Community hub for shareable, signed recipes (`.nimbus-recipe.yaml`) |
+| [`nimbus-mcp-servers`](https://github.com/nimbus-agent/nimbus-mcp-servers) | The first-party connectors, published as one package; each also runs standalone for any MCP client |
 | [`awesome-nimbus`](https://github.com/nimbus-agent/awesome-nimbus) | Curated list of connectors, recipes, extensions and resources |
 
 ### Distribution
@@ -99,6 +99,20 @@ Windows also ships through winget; installers are built in the `Nimbus` repo.
 | [`.github`](https://github.com/nimbus-agent/.github) | Org profile, shared community-health defaults, CLA, this document |
 | [`nimbus-security`](https://github.com/nimbus-agent/nimbus-security) | Public security model, invariant catalogue, vulnerability disclosure |
 | [`nimbus-benchmarks`](https://github.com/nimbus-agent/nimbus-benchmarks) | Public performance benchmarks and trend dashboards |
+| [`nimbus-trust`](https://github.com/nimbus-agent/nimbus-trust) | The signed trust feed every install applies: key revocations, takedowns and verified publishers |
+
+### Retired
+
+Five repositories held only a vision and a build prompt, and were retired on
+2026-11-12. Each row says where its work went.
+
+| Repo | What happened |
+| --- | --- |
+| `nimbus-statuspage` | Became a gateway row: the status page draft, [Phase 17](https://github.com/nimbus-agent/Nimbus/blob/main/docs/roadmap.md#phase-17--the-on-call-copilot) |
+| `nimbus-postmortem` | Became the gateway's post-mortem rows, [Phase 10](https://github.com/nimbus-agent/Nimbus/blob/main/docs/roadmap.md#phase-10--the-autonomous-agent) and Phase 17 |
+| `nimbus-connector-registry` | The registry shipped inside the gateway instead, [Phase 9.5](https://github.com/nimbus-agent/Nimbus/blob/main/docs/roadmap.md#phase-95--marketplace-registry) |
+| `nimbus-raycast` | Not planned; see [Rejected Directions](https://github.com/nimbus-agent/Nimbus/blob/main/docs/roadmap.md#rejected-directions) |
+| `nimbus-recipes` | Not planned as a gallery; recipes remain a share kind in the gateway. See [Rejected Directions](https://github.com/nimbus-agent/Nimbus/blob/main/docs/roadmap.md#rejected-directions) |
 
 ## Where planning lives
 
