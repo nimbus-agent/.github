@@ -2,7 +2,7 @@
 
 **A local-first AI agent framework.** Your machine is the source of truth; the cloud is just a connector.
 
-Nimbus is a headless agent runtime that builds a private, on-device index of your work across ~80 cloud services, then executes multi-step agentic workflows on your behalf — without your data ever leaving your machine unless *you* approve it.
+Nimbus is a headless agent runtime that builds a private, on-device index of your work across about 95 cloud services, then executes multi-step agentic workflows on your behalf — without your data ever leaving your machine unless *you* approve it.
 
 ---
 
@@ -16,11 +16,11 @@ Nimbus is a headless agent runtime that builds a private, on-device index of you
 
 ## What it connects to
 
-A growing roster of ~80 first-party connectors across Google, Microsoft 365, GitHub, GitLab, Slack, Jira, and Notion — plus observability, CI/CD, security & quality, feature-flags, GitOps, data & BI, deployment, finance, and support tools. Optional local-filesystem indexing rounds it out.
+A growing roster of about 95 first-party connectors across Google, Microsoft 365, GitHub, GitLab, Slack, Jira, and Notion — plus observability, CI/CD, security & quality, feature-flags, GitOps, data & BI, deployment, finance, and support tools. Optional local-filesystem indexing rounds it out.
 
 ## How you talk to it
 
-Clients — the CLI, a [VS Code extension](https://github.com/nimbus-agent/nimbus-vscode), and a Tauri 2.0 desktop app — talk to the headless Gateway over local JSON-RPC 2.0 IPC. A [browser web clipper](https://github.com/nimbus-agent/nimbus-web-clipper) (Chrome + Firefox) saves what you read straight into your index over the gateway's paired, local HTTP surface. Install the gateway + CLI via Homebrew, Scoop, or native installers (`.msi` / `.pkg` / `.rpm`).
+Clients — the CLI, a [VS Code extension](https://github.com/nimbus-agent/nimbus-vscode), and a Tauri 2.0 desktop app (built, not yet released) — talk to the headless Gateway over local JSON-RPC 2.0 IPC. A [browser web clipper](https://github.com/nimbus-agent/nimbus-web-clipper) (Chrome + Firefox) saves what you read straight into your index over the gateway's paired, local HTTP surface. Any MCP client, a coding agent for example, reaches your index and the built-in agents through the [MCP launcher](https://github.com/nimbus-agent/nimbus-mcp). Install the gateway + CLI via Homebrew, Scoop, or native installers (`.msi` / `.pkg` / `.rpm`).
 
 ```bash
 # Homebrew (macOS / Linux)
@@ -37,16 +37,20 @@ Local inference is supported through Ollama, so `nimbus ask` can run entirely of
 
 | Repo | What it is |
 | --- | --- |
-| [**Nimbus**](https://github.com/nimbus-agent/Nimbus) | The monorepo — Gateway, CLI, desktop UI, and first-party MCP connectors |
+| [**Nimbus**](https://github.com/nimbus-agent/Nimbus) | The gateway — Gateway, CLI and desktop UI; it bundles the first-party connectors |
+| [**nimbus-mcp-servers**](https://github.com/nimbus-agent/nimbus-mcp-servers) | `@nimbus-dev/connectors` — the first-party MCP connectors in one package; each also runs standalone for any MCP client |
+| [**nimbus-mcp**](https://github.com/nimbus-agent/nimbus-mcp) | `@nimbus-dev/mcp` — launcher for the Nimbus MCP server, so any MCP client reaches your index and agents |
 | [**nimbus-sdk**](https://github.com/nimbus-agent/nimbus-sdk) | `@nimbus-dev/sdk` — MIT, dependency-free authoring contract for MCP connectors & extensions (published to npm) |
 | [**nimbus-client**](https://github.com/nimbus-agent/nimbus-client) | `@nimbus-dev/client` — MIT typed JSON-RPC 2.0 IPC client for the gateway, used by the CLI & extensions (published to npm) |
 | [**nimbus-vscode**](https://github.com/nimbus-agent/nimbus-vscode) | VS Code / Open VSX extension — ask + search your index from the editor |
-| [**nimbus-web-clipper**](https://github.com/nimbus-agent/nimbus-web-clipper) | Chrome + Firefox (MV3) browser extension — clip articles & selections into your index |
+| [**nimbus-web-clipper**](https://github.com/nimbus-agent/nimbus-web-clipper) | Chrome + Firefox (MV3) browser extension — recognises the page you are on and runs the agents against it; also clips articles & selections into your index |
+| [**create-nimbus-connector**](https://github.com/nimbus-agent/create-nimbus-connector) | Scaffolding generator for first-party-style MCP connectors |
 | [**homebrew-tap**](https://github.com/nimbus-agent/homebrew-tap) | Homebrew distribution channel |
 | [**scoop-bucket**](https://github.com/nimbus-agent/scoop-bucket) | Scoop distribution channel |
 | [**linux-repo**](https://github.com/nimbus-agent/linux-repo) | Linux (apt / yum) package distribution channel |
 | [**awesome-nimbus**](https://github.com/nimbus-agent/awesome-nimbus) | Curated connectors, recipes, extensions & community resources |
-| [**nimbus-security**](https://github.com/nimbus-agent/nimbus-security) | Security model, invariant catalogue & vulnerability disclosure |
+| [**nimbus-security**](https://github.com/nimbus-agent/nimbus-security) | Security model & vulnerability disclosure |
+| [**nimbus-trust**](https://github.com/nimbus-agent/nimbus-trust) | The signed trust feed every install applies: key revocations, takedowns & verified publishers |
 | [**nimbus-benchmarks**](https://github.com/nimbus-agent/nimbus-benchmarks) | Public performance benchmarks & trend dashboards |
 
 ## Architecture at a glance
@@ -59,7 +63,7 @@ Local inference is supported through Ollama, so `nimbus ask` can run entirely of
 
 ## Security
 
-Security is enforced as code, not convention: a numbered set of **security invariants**, each with a production wiring site, a docs entry, and an enforcement test that all land in the same commit. Secret scanning with push protection, Dependabot, SHA-pinned GitHub Actions, and protected release branches & tags back the supply chain.
+Security is enforced as code, not convention: a numbered set of **security invariants**, each with a production wiring site, a docs entry, and an enforcement test that all land in the same commit. Secret scanning with push protection, Dependabot security alerts, SHA-pinned GitHub Actions, and protected release branches & tags back the supply chain.
 
 Found something? Please report it responsibly via a private security advisory on the [Nimbus repo](https://github.com/nimbus-agent/Nimbus/security/advisories).
 
