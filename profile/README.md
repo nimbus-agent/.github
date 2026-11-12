@@ -10,7 +10,7 @@ Nimbus is a headless agent runtime that builds a private, on-device index of you
 
 - 🔒 **Local-first** — a private SQLite index lives on your machine. Cloud services are connectors, never the system of record.
 - 🧑‍⚖️ **Human-in-the-loop is structural** — the consent gate lives in the execution engine, not in a prompt. It cannot be bypassed or configured away.
-- 🔑 **No plaintext credentials** — secrets live only in the OS vault (Windows DPAPI / macOS Keychain / Linux libsecret). Never in logs, IPC, or config.
+- 🔑 **No plaintext credentials** — in the gateway, secrets live only in the OS vault (Windows DPAPI / macOS Keychain / Linux libsecret). Never in logs, IPC, or config.
 - 🔌 **MCP-native** — every integration is a Model Context Protocol connector. The engine never calls a cloud API directly.
 - 🖥️ **Platform equality** — Windows, macOS, and Linux are first-class. CI gates on all three.
 
@@ -38,7 +38,7 @@ Local inference is supported through Ollama, so `nimbus ask` can run entirely of
 | Repo | What it is |
 | --- | --- |
 | [**Nimbus**](https://github.com/nimbus-agent/Nimbus) | The gateway — Gateway, CLI and desktop UI; it bundles the first-party connectors |
-| [**nimbus-mcp-servers**](https://github.com/nimbus-agent/nimbus-mcp-servers) | `@nimbus-dev/connectors` — the first-party MCP connectors in one package; each also runs standalone for any MCP client |
+| [**nimbus-mcp-servers**](https://github.com/nimbus-agent/nimbus-mcp-servers) | `@nimbus-dev/connectors` — the first-party MCP connectors in one package; each also runs standalone for any MCP client, without the gateway's vault, sandbox or ledger |
 | [**nimbus-mcp**](https://github.com/nimbus-agent/nimbus-mcp) | `@nimbus-dev/mcp` — launcher for the Nimbus MCP server, so any MCP client reaches your index and agents |
 | [**nimbus-sdk**](https://github.com/nimbus-agent/nimbus-sdk) | `@nimbus-dev/sdk` — MIT, dependency-free authoring contract for MCP connectors & extensions (published to npm) |
 | [**nimbus-client**](https://github.com/nimbus-agent/nimbus-client) | `@nimbus-dev/client` — MIT typed JSON-RPC 2.0 IPC client for the gateway, used by the CLI & extensions (published to npm) |

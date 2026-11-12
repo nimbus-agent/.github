@@ -79,7 +79,7 @@ here — this document says what exists, not what happens next.
 | Repo | Role |
 | --- | --- |
 | `create-nimbus-connector` | Scaffolding generator for first-party-style MCP connectors |
-| [`nimbus-mcp-servers`](https://github.com/nimbus-agent/nimbus-mcp-servers) | The first-party connectors, published as one package; each also runs standalone for any MCP client |
+| [`nimbus-mcp-servers`](https://github.com/nimbus-agent/nimbus-mcp-servers) | The first-party connectors, published as one package; each also runs standalone for any MCP client. Run standalone, a connector has no gateway around it: no vault, no sandbox and no egress ledger. That repository's `NOTICE` says exactly what it keeps |
 | [`awesome-nimbus`](https://github.com/nimbus-agent/awesome-nimbus) | Curated list of connectors, recipes, extensions and resources |
 
 ### Distribution
@@ -135,8 +135,11 @@ second sequencing document only creates two files claiming the same authority.
 
 ## Non-negotiables
 
-These hold across every repository in the ecosystem. They are architectural
-constraints, not preferences:
+These hold for the gateway and for everything that runs through it, in every
+repository. They are architectural constraints, not preferences. One limit is
+stated plainly: a connector run standalone, outside the gateway, takes its
+credentials from the environment or the MCP client's configuration and has no
+vault, sandbox or ledger around it (see `nimbus-mcp-servers`' `NOTICE`).
 
 1. **Local-first** — the machine is the source of truth; the cloud is a connector.
 2. **Human-in-the-loop is structural** — the consent gate lives in the execution
