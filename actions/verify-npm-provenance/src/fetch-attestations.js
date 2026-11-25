@@ -18,6 +18,15 @@ export function attestationUrl(pkg, version) {
   return `${REGISTRY}/${pkg}@${version}`;
 }
 
+/** The parsed body, or `ok: false` when the bytes are not JSON. */
+async function readJson(res) {
+  try {
+    return { ok: true, body: await res.json() };
+  } catch {
+    return { ok: false };
+  }
+}
+
 /**
  * Attestations can trail a publish, and the registry is CDN-fronted, so a 404
  * is only conclusive once the backoff schedule is exhausted.
@@ -36,15 +45,13 @@ export async function fetchAttestations(pkg, version, deps) {
     try {
       const res = await deps.fetchFn(url, { headers: { accept: "application/json" } });
       if (res.status === 200) {
-        try {
-          return { outcome: "body", body: await res.json(), detail: "200" };
-        } catch {
-          // A 200 carrying unparseable bytes is transient, not authoritative:
-          // a CDN/proxy error page or a truncated body both look like this.
-          // Retry rather than failing a release on one bad edge response.
-          lastDetail = "200 with unparseable JSON body";
-          continue;
-        }
+        const parsed = await readJson(res);
+        if (parsed.ok) return { outcome: "body", body: parsed.body, detail: "200" };
+        // A 200 carrying unparseable bytes is transient, not authoritative:
+        // a CDN/proxy error page or a truncated body both look like this.
+        // Retry rather than failing a release on one bad edge response.
+        lastDetail = "200 with unparseable JSON body";
+        continue;
       }
       if (res.status === 404) {
         lastDetail = "404 after full backoff";
