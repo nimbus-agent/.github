@@ -125,3 +125,33 @@ test("transient bad body then good body succeeds", async () => {
   assert.equal(r.outcome, "body");
   assert.equal(calls, 2);
 });
+
+test("a 200 with an unparseable body is retried, then a good 200 returns its body", async () => {
+  let calls = 0;
+  const r = await fetchAttestations("@x/y", "1.0.0", {
+    fetchFn: async () => {
+      calls += 1;
+      return calls < 2
+        ? new Response("<html>edge error</html>", { status: 200 })
+        : new Response(JSON.stringify({ attestations: [1] }), { status: 200 });
+    },
+    sleep: noSleep,
+  });
+  assert.equal(r.outcome, "body");
+  assert.deepEqual(r.body, { attestations: [1] });
+  assert.equal(calls, 2);
+});
+
+test("a 200 that never parses exhausts retries and reports error, not absent", async () => {
+  let calls = 0;
+  const r = await fetchAttestations("@x/y", "1.0.0", {
+    fetchFn: async () => {
+      calls += 1;
+      return new Response("not json", { status: 200 });
+    },
+    sleep: noSleep,
+  });
+  assert.equal(r.outcome, "error");
+  assert.equal(r.detail, "200 with unparseable JSON body");
+  assert.equal(calls, BACKOFF_MS.length + 1);
+});

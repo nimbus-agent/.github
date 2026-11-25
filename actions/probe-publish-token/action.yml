@@ -31,6 +31,9 @@ runs:
       # credential to the resolved package, so `@latest` (or a `^` range, which
       # still floats) would put a third-party release in the credential's trust
       # boundary. Bumping these is a deliberate, reviewed change.
+      # `--ignore-scripts` keeps the install from running any dependency's
+      # lifecycle scripts; neither `verify-pat` needs one (checked against both
+      # pinned versions with a rejected token: each reached the vendor and failed).
       run: |
         set +e
         if [ -z "${PUBLISH_TOKEN}" ]; then
@@ -46,11 +49,11 @@ runs:
           exit 0
         fi
         if [ "${TOOL}" = "vsce" ]; then
-          VSCE_PAT="${PUBLISH_TOKEN}" npx --yes @vscode/vsce@3.9.2 verify-pat "${NAMESPACE}" >/dev/null 2>&1
+          VSCE_PAT="${PUBLISH_TOKEN}" npx --yes --ignore-scripts @vscode/vsce@3.9.2 verify-pat "${NAMESPACE}" >/dev/null 2>&1
           code=$?
           reach_url="https://marketplace.visualstudio.com/"
         else
-          OVSX_PAT="${PUBLISH_TOKEN}" npx --yes ovsx@1.0.2 verify-pat "${NAMESPACE}" >/dev/null 2>&1
+          OVSX_PAT="${PUBLISH_TOKEN}" npx --yes --ignore-scripts ovsx@1.0.2 verify-pat "${NAMESPACE}" >/dev/null 2>&1
           code=$?
           reach_url="https://open-vsx.org/api/-/search?size=1"
         fi
