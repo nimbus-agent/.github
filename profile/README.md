@@ -16,7 +16,7 @@ nimbus demo                 # or try a seeded synthetic org first, isolated from
 
 ## Know · Act · Prove
 
-- 🧠 **Know.** A headless Gateway keeps a private SQLite index of your tools on your machine: source control, CI/CD, cloud, monitoring, incidents, tickets and chat, across about 95 services. Cloud services are connectors, never the system of record. There is no Nimbus server.
+- 🧠 **Know.** A headless Gateway keeps a private SQLite index of your tools on your machine: source control, CI/CD, cloud, monitoring, incidents, tickets and chat, across about 100 services. Cloud services are connectors, never the system of record. There is no Nimbus server.
 - ✋ **Act.** Every write, send or delete stops at a human-in-the-loop gate that lives in the executor, not in a prompt, so it cannot be talked or configured away. You see a typed preview and the target's current state before anything changes. Outside coding agents (Claude Code, Codex, any MCP client) can *propose* only the connector writes you approved for them by name, and you approve each one in `nimbus approvals`.
 - 🧾 **Prove.** Every action Nimbus dispatches is written to an append-only, BLAKE3-chained egress ledger *before* it goes out. `nimbus prove --since 24h` shows what Nimbus dispatched, and `nimbus prove --by-proposer` breaks it down by agent.
 
