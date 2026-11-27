@@ -23,7 +23,7 @@ planned direction; this document describes what exists.
    VS Code    ─────┐   │   │  Nimbus Gateway      │   │  ┌── Google, Microsoft
    web clipper ────┼──►│   │  · private SQLite    │──►│──┼── GitHub, GitLab, Jira
    MCP clients ────┤   │   │  · agent engine      │   │  ├── Slack, Notion, …
-   CLI / TUI  ─────┘   │   │  · HITL consent gate │   │  └── about 95 services, MCP only
+   CLI / TUI  ─────┘   │   │  · HITL consent gate │   │  └── about 100 services, MCP only
                        │   └──────────────────────┘   │
                        │        JSON-RPC 2.0 IPC      │
                        └──────────────────────────────┘
